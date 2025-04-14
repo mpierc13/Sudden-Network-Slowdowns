@@ -45,38 +45,44 @@ DeviceProcessEvents
    | order by ConnectionCount
    ```
 
-![Screenshot 2025-01-06 104150](https://github.com/user-attachments/assets/2eb708ed-7191-4219-b1a8-7fd416eee0c2)
+![image](https://github.com/user-attachments/assets/e9a8fe6b-e168-40ed-a189-9554af35492d)
 
 
-2. **⚙️ Process Analysis:**
-   - **Observed Behavior:** After observing failed connection requests from a suspected host (`10.0.0.5`) in chronological order, I noticed a port scan was taking place due to the sequential order of the ports. There were several port scans being conducted.
+
+2. **Process Analysis:**
+   - **Observed Behavior:** After observing failed connection requests from a suspected host (`10.0.1.119`) in chronological order, I noticed a port scan was taking place due to the sequential order of the ports. There were several port scans being conducted.
 
    **Detection Query (KQL):**
    ```kql
-   let IPInQuestion = "10.0.0.5";
+   let IPInQuestion = "10.0.1.119";
    DeviceNetworkEvents
    | where ActionType == "ConnectionFailed"
    | where LocalIP == IPInQuestion
    | order by Timestamp desc
    ```
-![Screenshot 2025-01-06 110119](https://github.com/user-attachments/assets/0a413b76-a739-4779-ac8a-aa3cd4a8ff9e)
+
+![image](https://github.com/user-attachments/assets/651e17ae-d17f-4c70-bffb-fc1663b06472)
+
+
 
    
 
-3. **🌐 Network Check:**
-   - **Observed Behavior:** I pivoted to the `DeviceProcessEvents` table to see if we could see anything that was suspicious around the time the port scan started. We noticed a PowerShell script named `portscan.ps1` launched at `2025-01-06T06:37:00.774381Z`.
+3. **Network Check:**
+   - **Observed Behavior:** I pivoted to the `DeviceProcessEvents` table to see if we could see anything that was suspicious around the time the port scan started. We noticed a PowerShell script named `portscan.ps1` launched at `2025-04-07T19:33:51.381216Z`.
 
    **Detection Query (KQL):**
 ```kql
-let VMName = "windows-target-1";
-let specificTime = datetime(2025-01-06T06:37:00.774381Z);
+let VMName = "marcels-vm";
+let specificTime = datetime(2025-04-07T19:33:51.381216Z);
 DeviceProcessEvents
 | where Timestamp between ((specificTime - 10m) .. (specificTime + 10m))
 | where DeviceName == VMName
 | order by Timestamp desc
 | project Timestamp, FileName, InitiatingProcessCommandLine
 ```
-![Screenshot 2025-01-13 161326](https://github.com/user-attachments/assets/ad26dcfb-2c43-4674-8a14-f926415d9ee6)
+![image](https://github.com/user-attachments/assets/b909e931-5a89-4e3f-9487-551a3ee0ec84)
+
+
 
 5. **📝 Response:**
    - We observed the port scan script was launched by the SYSTEM account. This is not expected behavior and it is not something that was setup by the admins. I isolated the device and ran a malware scan. The malware scan produced no results, so out of caution, I kept the device isolated and put in a ticket to have it re-image/rebuilt. Shared findings with the manager, highlighting automated archive creation. Awaiting further instructions.
