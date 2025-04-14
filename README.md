@@ -34,24 +34,21 @@ DeviceProcessEvents
 ```
 
 ### **Timeline Overview**
-1. Marcels-vm was found failing several connection requests against itself and another host on the same network.
+1. **Marcels-vm was found failing several connection requests against itself and another host on the same network.**
 
    **Detection Query (KQL):**
    ```kql
    DeviceNetworkEvents
-| where DeviceName == "marcels-vm"
-| where ActionType == "ConnectionFailed"
-| summarize ConnectionCount = count() by DeviceName, ActionType, LocalIP
-| order by ConnectionCount
+   | where DeviceName == "marcels-vm"
+   | where ActionType == "ConnectionFailed"
+   | summarize ConnectionCount = count() by DeviceName, ActionType, LocalIP
+   | order by ConnectionCount
    ```
 
-
-![image](https://github.com/user-attachments/assets/4b179fe6-704d-4435-87ab-e914235d1426)
-
+![Screenshot 2025-01-06 104150](https://github.com/user-attachments/assets/2eb708ed-7191-4219-b1a8-7fd416eee0c2)
 
 
-
-2. **⚙ Process Analysis:**
+2. **⚙️ Process Analysis:**
    - **Observed Behavior:** After observing failed connection requests from a suspected host (`10.0.0.5`) in chronological order, I noticed a port scan was taking place due to the sequential order of the ports. There were several port scans being conducted.
 
    **Detection Query (KQL):**
@@ -114,18 +111,18 @@ DeviceProcessEvents
 ---
 
 ## Created By:
-- **Author Name**: Marcel Pierce
-- **Author Contact**: https://www.linkedin.com/in/marcel-pierce-1a49b52a5/
-- **Date**: Apr 2025
+- **Author Name**: Trevino Parker
+- **Author Contact**: https://www.linkedin.com/in/trevinoparker/
+- **Date**: Jan 2025
 
 ## Validated By:
-- **Reviewer Name**:
-- **Reviewer Contact**: 
-- **Validation Date**: 
+- **Reviewer Name**: Josh Madakor
+- **Reviewer Contact**: https://www.linkedin.com/in/joshmadakor/
+- **Validation Date**: Jan 2025
 
 ---
 
 ## Revision History:
 | **Version** | **Changes**                   | **Date**         | **Modified By**   |
 |-------------|-------------------------------|------------------|-------------------|
-| 1.0         | Initial draft                  | `Apr 2025`  | `Marcel Pierce`   
+| 1.0         | Initial draft                  | `Jan 2025`  | `Trevino Parker`   
